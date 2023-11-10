@@ -1,3 +1,0 @@
-docker plugin install rexray/ebs \
-	EBS_ACCESSKEY=AKIATMOZKFC2LQNWHVPJ \
-	EBS_SECRETKEY=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 \

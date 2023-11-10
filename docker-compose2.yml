@@ -1,0 +1,38 @@
+version: '3.1'
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    networks:
+    - ecommerce
+    - fintech
+    volumes:
+    - mongo-data:/data/db
+    environment:
+    - MONGO_INITDB_ROOT_USERNAME=uatdb
+    - MONGO_INITDB_ROOT_PASSWORD=uatdb123
+  springapp:
+    image: joveluro/spring-boot-mongo
+    restart: always
+    networks:
+    - ecommerce
+    - fintech
+    ports:
+    - 6000:8080
+    environment:
+    - MONGO_DB_USERNAME=uatdb
+    - MONGO_DB_PASSWORD=uatdb123
+    - MONGO_DB_HOSTNAME=mongo26
+    depends_on:
+    - mongodb
+volumes:
+  mongo-data:
+    driver: local
+  ebs-data:
+    driver: rexray/ebs
+networks:
+   ecommerce:
+     driver: bridge
+   fintech:
+     driver: bridge
+~

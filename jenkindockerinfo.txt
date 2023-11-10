@@ -1,0 +1,31 @@
+
+# Docker install
+# Copy and paste this script in as Dockerfile
+
+USER root
+RUN apt-get update && apt-get install -y \
+       apt-transport-https \
+       ca-certificates \
+       curl \
+       gnupg2 \
+       software-properties-common
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+RUN apt-key fingerprint 0EBFCD88
+RUN add-apt-repository \
+       "deb [arch=amd64] https://download.docker.com/linux/debian \
+       $(lsb_release -cs) \
+       stable"
+RUN apt-get update && apt-get install -y docker-ce-cli
+
+USER jenkins
+
+# Build the Dockerfile
+docker build -t <name> -f <Dockerfilename> .
+# You usually do this --
+docker build -t dockerjenkins -f Dockerfile . 
+
+# Afterward, 
+# Run this command for the container
+docker run --rm -d --group-add $(stat -c '%g' /var/run/docker.sock) -v /var/run/docker.sock:/var/run/docker.sock --name dockerjenkins -p 8000:8080 jenkins-docker
+
+# Now, you should be able to run docker in a jenkin container in docker server.

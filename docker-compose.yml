@@ -1,0 +1,40 @@
+# hi
+version: '3.8'
+services:
+  mongodb:
+    image: mongo
+    restart: always
+    networks:
+      - ecommerce
+      - fintech
+    volumes:
+      - data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=uatdb
+      - MONGO_INITDB_ROOT_PASSWORD=uatdb123
+  springapp:
+    image: cawuchi/spring-boot-mongo
+    restart: always
+    networks:
+      - ecommerce
+      - fintech
+    ports: 
+      - 5000:8080
+    environment:
+      - MONGO_DB_USERNAME=uatdb
+      - MONGO_DB_PASSWORD=uatdb123
+      - MONGO_DB_HOSTNAME=mongodb
+    depends_on:
+      - mongodb
+volumes:
+  data:
+    driver: local
+  ebsvolume:
+    driver: rexray/ebs
+networks:
+  ecommerce:
+    driver: bridge
+  fintech:
+    driver: bridge
+  acada:
+    driver: bridge

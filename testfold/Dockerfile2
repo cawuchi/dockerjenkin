@@ -1,0 +1,26 @@
+# GIT CLONE FROM GIT HUB
+FROM alpine/git as repo
+MAINTAINER cawuchi
+USER root
+WORKDIR /app
+RUN git clone https://github.com/cawuchi/Jenkins-Docker-K8s-Spring-boot-mongo.git
+
+# PACKAGE THE FILES FROM MAVEN
+FROM maven:latest as build
+USER root
+WORKDIR /app
+COPY --from=repo /app/Jenkins-Docker-K8s-Spring-boot-mongo/ /app
+RUN mvn clean package
+
+# DEPLOY TO TOMCAT
+FROM tomcat:latest as deploy
+COPY --from=build /app/target/*.jar /usr/local/tomcat/webapps/
+
+# RUNNING THE WEBSITE
+FROM openjdk:8-alpine
+USER root
+WORKDIR /app
+COPY --from=build /app/target/spring-boot-mongo-1.0.jar /app/spring-boot-mongo.jar
+EXPOSE 8080
+CMD ["java", "-jar" , "./spring-boot-mongo.jar"]
+
